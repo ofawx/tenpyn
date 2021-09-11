@@ -32,7 +32,7 @@ class BowlingGame:
     def roll(self, pins: int):
         # If start of new frame, instantiate new current frame
         if self.frames[-1].rolls_complete():
-        self.frames.append(Frame())
+            self.frames.append(Frame())
 
         # Apply score to current frame
         self.frames[-1].roll(pins)
