@@ -7,15 +7,41 @@ class Frame:
     """
     def __init__(self):
         self.rolls = []
+        self.bonuses = []
 
     def roll(self, pins: int) -> None:
         self.rolls.append(pins)
+
+    def bonus(self, pins: int) -> None:
+        """
+        Add bonus pins from subsequent frames, if applicable
+        """
+        if self.__apply_bonus():
+            self.bonuses.append(pins)
 
     def score(self) -> int:
         return sum(self.rolls)
 
     def rolls_complete(self) -> bool:
         return len(self.rolls) == 2 or sum(self.rolls) == 10
+
+    def __apply_bonus(self) -> bool:
+        """
+        Private boolean method to determine whether bonus
+        should be added (whether N/A or quota filled)
+        """
+        # No strike/spare or frame incomplete
+        if self.score() < 10 or not self.rolls_complete():
+            return False
+        # Strike
+        elif len(self.rolls) == 1:
+            return True if len(self.bonuses) < 2 else False
+        # Spare
+        elif len(self.rolls) == 2:
+            return True if len(self.bonuses) < 1 else False
+        # Undefined
+        else:
+            raise NotImplementedError('Check logic')
 
 
 class BowlingGame:
@@ -36,3 +62,7 @@ class BowlingGame:
 
         # Apply score to current frame
         self.frames[-1].roll(pins)
+
+        # Apply bonus score to previous two frames only
+        for f in self.frames[-3:-1]:
+            f.bonus(pins)
