@@ -43,6 +43,19 @@ class Frame:
         else:
             raise NotImplementedError('Check logic')
 
+class FinalFrame(Frame):
+    """
+    Subclass of Frame to provide final frame specific logic
+    """
+    def rolls_complete(self) -> bool:
+        if sum(self.rolls) < 10 and len(self.rolls) == 2:
+            return True
+        else:
+            return len(self.rolls) == 3
+
+    def __apply_bonus(self) -> bool:
+        return False
+
 
 class BowlingGame:
     """
@@ -50,15 +63,20 @@ class BowlingGame:
     Consists of 10 frames.
     """
     def __init__(self):
+        self.max_frames = 10
         self.frames = [Frame()]
 
     def score(self) -> int:
         return sum(f.score() for f in self.frames)
 
     def roll(self, pins: int):
-        # If start of new frame, instantiate new current frame
+        # If current frame already complete, instantiate new current frame
         if self.frames[-1].rolls_complete():
-            self.frames.append(Frame())
+            self.frames.append(
+                # Append a normal frame or final frame conditionally
+                Frame() if len(self.frames) < self.max_frames - 1 \
+                else FinalFrame()
+            )
 
         # Apply score to current frame
         self.frames[-1].roll(pins)
