@@ -20,7 +20,7 @@ class Frame:
             self.bonuses.append(pins)
 
     def score(self) -> int:
-        return sum(self.rolls)
+        return sum(self.rolls) + sum(self.bonuses)
 
     def rolls_complete(self) -> bool:
         return len(self.rolls) == 2 or sum(self.rolls) == 10
